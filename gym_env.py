@@ -206,7 +206,19 @@ class PokerEnv(gym.Env):
             reward = (0, 0)
         terminated = winner is not None
         truncated = False
-        info = {"player_0_cards": info0["player_cards"], "player_1_cards": info1["player_cards"], "community_cards": info0["community_cards"], "invalid_action": invalid_action}
+
+        is_showdown = terminated and self.street > 3
+        info = (
+            {
+                "player_0_cards": info0["player_cards"],
+                "player_1_cards": info1["player_cards"],
+                "community_cards": info0["community_cards"],
+                "invalid_action": invalid_action,
+            }
+            if is_showdown
+            else {}
+        )
+
         return (obs0, obs1), reward, terminated, truncated, info
 
     def _draw_card(self):
@@ -254,12 +266,7 @@ class PokerEnv(gym.Env):
 
         obs0, info0 = self._get_single_player_obs(0)
         obs1, info1 = self._get_single_player_obs(1)
-        info = {
-            "player_0_cards": info0["player_cards"],
-            "player_1_cards": info1["player_cards"],
-            "community_cards": info0["community_cards"],
-        }
-
+        info = {}
         return (obs0, obs1), info
 
     def _next_street(self):
@@ -334,9 +341,8 @@ class PokerEnv(gym.Env):
             winner = 1 - self.acting_agent
         elif action_type == self.ActionType.CALL.value:
             self.bets[self.acting_agent] = self.bets[1 - self.acting_agent]
-            if not (self.street == 0 and self.acting_agent == self.small_blind_player):
+            if not (self.street == 0 and self.acting_agent == self.small_blind_player and self.bets[self.acting_agent] == self.big_blind_amount):
                 # on the first street, the little blind can "call" the big blind's bet of 2
-                assert self.bets[self.acting_agent] >= self.big_blind_amount
                 new_street = True
         elif action_type == self.ActionType.CHECK.value:
             if self.acting_agent == self.big_blind_player:
