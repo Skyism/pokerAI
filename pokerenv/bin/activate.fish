@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV /Users/jeffreyshen/Desktop/Vscode/aipoker/pokerenv
+set -gx VIRTUAL_ENV /Users/jeffreyshen/Desktop/Vscode/aipoker/pokerAI/pokerenv
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"bin $PATH

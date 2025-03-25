@@ -1,4 +1,4 @@
-#!/Users/jeffreyshen/Desktop/Vscode/aipoker/pokerenv/bin/python3.12
+#!/Users/jeffreyshen/Desktop/Vscode/aipoker/pokerAI/pokerenv/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys

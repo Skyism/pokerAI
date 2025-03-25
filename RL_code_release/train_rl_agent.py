@@ -7,7 +7,7 @@ import torch.optim as optim
 # Import our poker environment and opponent agent classes.
 from gym_env import PokerEnv
 from agents.agent import Agent
-from agents.prob_agent import ProbabilityAgent
+from submission.player import PlayerAgent
 
 # --- Helper Functions for Preprocessing and Equity Calculation ---
 
@@ -182,7 +182,7 @@ def train_agent(num_episodes=500, save_every=50, weight_path="rl_agent_weights.p
     agent.policy_net.to(device)
     
     # Use ProbabilityAgent as the opponent.
-    opponent_agent = ProbabilityAgent()
+    opponent_agent = PlayerAgent()
     print(f"Using opponent: {opponent_agent.__name__()}")
 
     for episode in range(num_episodes):
