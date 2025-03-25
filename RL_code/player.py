@@ -6,7 +6,7 @@ from gym_env import PokerEnv
 
 # Import the helper functions and PolicyNetwork from the training file.
 # Adjust the import path as needed.
-from train_rl_agent import PolicyNetwork, preprocess_observation
+from RL_code.train_rl_agent import PolicyNetwork, preprocess_observation
 
 action_types = PokerEnv.ActionType
 int_to_card = PokerEnv.int_to_card

@@ -24,7 +24,7 @@ def main():
 
     # Load agent classes dynamically
     bot0_class = load_agent_class(config['bot0']['file_path'])
-    bot1_class = load_agent_class(config['bot1']['file_path'])
+    bot1_class = load_agent_class(config['ml']['file_path'])
 
     # Create processes using the configuration
     process0 = multiprocessing.Process(
@@ -34,8 +34,8 @@ def main():
     )
     process1 = multiprocessing.Process(
         target=bot1_class.run,
-        args=(False, config['bot1']['port']),
-        kwargs = {"player_id": config['bot1']['player_id']}
+        args=(False, config['ml']['port']),
+        kwargs = {"player_id": config['ml']['player_id']}
     )
 
     process0.start()
@@ -44,7 +44,7 @@ def main():
     logger.info("Starting API-based match")
     result = run_api_match(
         f"http://localhost:{config['bot0']['port']}",
-        f"http://localhost:{config['bot1']['port']}",
+        f"http://localhost:{config['ml']['port']}",
         logger,
         csv_path=config['match_settings']['csv_output_path'],
         team_0_name=bot0_class.__name__,
