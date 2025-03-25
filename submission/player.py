@@ -43,7 +43,7 @@ class PlayerAgent(Agent):
             return my_hand_rank < opp_hand_rank
 
         # Run Monte Carlo simulation
-        num_simulations = 1000
+        num_simulations = 5000
         wins = sum(
             evaluate_hand((my_cards, opp_drawn_card + drawn_cards[: 2 - len(opp_drawn_card)], community_cards + drawn_cards[2 - len(opp_drawn_card) :]))
             for _ in range(num_simulations)

@@ -3,7 +3,7 @@ from gym_env import PokerEnv
 import random
 import torch
 import numpy as np
-from treys import Evaluator
+from gym_env import WrappedEval
 import os
 import time
 
@@ -43,7 +43,7 @@ class PlayerAgent(Agent):
 
     def __init__(self, stream: bool = False, player_id: str = None):
         super().__init__(stream, player_id)
-        self.evaluator = Evaluator()
+        self.evaluator = WrappedEval()
         self.hand_counter = 0
         self.time_budget_per_hand = 1.5  # seconds
         
@@ -304,7 +304,7 @@ class PlayerAgent(Agent):
                 card_to_discard = 0 if card_0_rank < card_1_rank else 1
             
             # Override if equity is already high
-            if equity > 0.65:
+            if equity > 0.6:
                 card_to_discard = -1
                 
             if card_to_discard != -1:

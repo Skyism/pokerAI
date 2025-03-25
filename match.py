@@ -15,7 +15,7 @@ import requests
 
 from gym_env import PokerEnv
 
-TIME_LIMIT_SECONDS = 500
+TIME_LIMIT_SECONDS = 1000
 GET_ACTION_ENDPOINT = "/get_action"
 SEND_OBS_ENDPOINT = "/post_observation"
 
@@ -198,7 +198,7 @@ def run_api_match(
         writer.writeheader()
 
         def format_error(e):
-            return f"ERROR Raised: \"{str(e)}\". Stacktrace:\n{traceback.format_exc()}"
+            return f'ERROR Raised: "{str(e)}". Stacktrace:\n{traceback.format_exc()}'
 
         for hand_number in range(num_hands):
             env = PokerEnv(logger=logger)  # env for a single hand
@@ -255,6 +255,17 @@ def play_hand(
     info["hand_number"] = hand_number
     reward0 = reward1 = 0
     terminated = truncated = False
+    obs0["time_used"] = time_used_0
+    obs0["time_left"] = TIME_LIMIT_SECONDS - time_used_0
+
+    obs1["time_used"] = time_used_1
+    obs1["time_left"] = TIME_LIMIT_SECONDS - time_used_1
+
+    obs1["opp_last_action"] = "None"
+    obs0["opp_last_action"] = "None"
+
+    bot_0_last_move: Optional[PokerEnv.ActionType] = None
+    bot_1_last_move: Optional[PokerEnv.ActionType] = None
 
     # Loop until hand terminates
     while not terminated:
@@ -270,16 +281,21 @@ def play_hand(
         action_start = time.time()
         action = call_agent_api("GET", current_url, GET_ACTION_ENDPOINT, current_payload, logger, current_player)
         action_duration = time.time() - action_start
+        action_type = PokerEnv.ActionType(action["action"][0])
 
         # Update time tracking
         if current_player == 0:
             time_used_0 += action_duration
             if time_used_0 > TIME_LIMIT_SECONDS:
                 raise TimeoutError("Player 0 exceeded time limit")
+            
+            bot_0_last_move = action_type
         else:
             time_used_1 += action_duration
             if time_used_1 > TIME_LIMIT_SECONDS:
                 raise TimeoutError("Player 1 exceeded time limit")
+        
+            bot_1_last_move = action_type
 
         # Notify other player
         call_agent_api("POST", observer_url, SEND_OBS_ENDPOINT, observer_payload, logger, 1 - current_player)
@@ -298,7 +314,7 @@ def play_hand(
             "team_1_discarded": env.int_card_to_str(env.discarded_cards[1]) if env.discarded_cards[1] != -1 else "",
             "team_0_bet": obs0["my_bet"] if obs0["acting_agent"] == 0 else obs0["opp_bet"],
             "team_1_bet": obs1["my_bet"] if obs1["acting_agent"] == 1 else obs1["opp_bet"],
-            "action_type": PokerEnv.ActionType(action["action"][0]).name,
+            "action_type": action_type.name,
             "action_amount": action["action"][1],
         }
         writer.writerow(current_state)
@@ -306,7 +322,14 @@ def play_hand(
         # Step environment
         (obs0, obs1), (reward0, reward1), terminated, truncated, info = env.step(action=action["action"])
         info["hand_number"] = hand_number  # Maintain hand number after each step
-
+        
+        obs0["time_used"] = time_used_0
+        obs1["time_used"] = time_used_1
+        obs0["time_left"] = TIME_LIMIT_SECONDS - time_used_0
+        obs1["time_left"] = TIME_LIMIT_SECONDS - time_used_1
+        
+        obs1["opp_last_action"] = "None" if bot_0_last_move is None else bot_0_last_move.name
+        obs0["opp_last_action"] = "None" if bot_1_last_move is None else bot_1_last_move.name
     # game has terminated; prepare and send final observation
     bot0_payload = prepare_payload(obs0, reward0, terminated, truncated, info)
     bot1_payload = prepare_payload(obs1, reward1, terminated, truncated, info)
@@ -338,6 +361,8 @@ def get_match_result(
             - bot0_reward/bot1_reward: Final bankroll amounts (if available)
             - error: Error message (if status is 'error')
     """
+    global time_used_0, time_used_1
+
     result = {"status": status}
 
     # Add result field for completed matches
@@ -359,6 +384,10 @@ def get_match_result(
     if rewards:
         result["bot0_reward"] = rewards[0]
         result["bot1_reward"] = rewards[1]
+
+    # Add time used data
+    result["bot0_time_used"] = time_used_0
+    result["bot1_time_used"] = time_used_1
 
     if error:
         result["error"] = error

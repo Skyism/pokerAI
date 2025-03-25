@@ -1,6 +1,6 @@
 {
     "bot0": {
-        "file_path": "agents.test_agents.AllInAgent",
+        "file_path": "agents.test_agents.RandomAgent",
         "port": 8020,
         "player_id": "bot0"
     },

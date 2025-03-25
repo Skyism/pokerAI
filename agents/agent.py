@@ -18,12 +18,17 @@ class Observation(TypedDict):
     my_cards: List[int]
     community_cards: List[int]
     my_bet: int
+    my_discarded_card: int
+    my_drawn_card: int
     opp_bet: int
     opp_discarded_card: int
     opp_drawn_card: int
     min_raise: int
     max_raise: int
     valid_actions: List[int]
+    time_used: float
+    time_left: float
+    opp_last_action: str
 
 
 class ActionRequest(BaseModel):
