@@ -23,14 +23,14 @@ def main():
     logger = logging.getLogger(__name__)
 
     # Load agent classes dynamically
-    bot0_class = load_agent_class(config['bot0']['file_path'])
+    bot0_class = load_agent_class(config['new']['file_path'])
     bot1_class = load_agent_class(config['bot1']['file_path'])
 
     # Create processes using the configuration
     process0 = multiprocessing.Process(
         target=bot0_class.run,
-        args=(False, config['bot0']['port']),
-        kwargs = {"player_id": config['bot0']['player_id']}
+        args=(False, config['new']['port']),
+        kwargs = {"player_id": config['new']['player_id']}
     )
     process1 = multiprocessing.Process(
         target=bot1_class.run,
@@ -43,7 +43,7 @@ def main():
 
     logger.info("Starting API-based match")
     result = run_api_match(
-        f"http://localhost:{config['bot0']['port']}",
+        f"http://localhost:{config['new']['port']}",
         f"http://localhost:{config['bot1']['port']}",
         logger,
         csv_path=config['match_settings']['csv_output_path'],

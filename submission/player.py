@@ -1,7 +1,7 @@
 from agents.agent import Agent
 from gym_env import PokerEnv
 import random
-from treys import Evaluator
+from gym_env import WrappedEval
 
 action_types = PokerEnv.ActionType
 int_to_card = PokerEnv.int_to_card
@@ -12,7 +12,7 @@ class PlayerAgent(Agent):
 
     def __init__(self, stream: bool = False):
         super().__init__(stream)
-        self.evaluator = Evaluator()
+        self.evaluator = WrappedEval()
 
     def act(self, observation, reward, terminated, truncated, info):
         # Log new street starts with important info
