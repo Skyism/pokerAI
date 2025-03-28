@@ -6,7 +6,7 @@ import torch.optim as optim
 
 # Import our poker environment and opponent agent classes.
 from gym_env import PokerEnv
-from submission.player import PlayerAgent
+from archive.archive1player import PlayerAgent
 
 # --- Helper Functions for Preprocessing and Equity Calculation ---
 

@@ -63,7 +63,7 @@ def get_player_agent() -> Optional[Type[Agent]]:
         Optional[Type[Agent]]: PlayerAgent class if successful, None if import fails
     """
     try:
-        from submission.player import PlayerAgent
+        from archive.archive1player import PlayerAgent
 
         return PlayerAgent
     except ImportError:

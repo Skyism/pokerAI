@@ -5,19 +5,19 @@
         "player_id": "bot0"
     },
     "bot1": {
-        "file_path": "submission.player.PlayerAgent",
-        "port": 8021,
-        "player_id": "bot1"
+        "file_path": "archive.archive1player.PlayerAgent",
+        "port": 8031,
+        "player_id": "old challenge bot"
     },
     "ml": {
-        "file_path": "player.PlayerAgent",
-        "port": 8022,
+        "file_path": "mlplayer.PlayerAgent",
+        "port": 8050,
         "player_id": "ml"
     },
     "new": {
-        "file_path": "submission.improvedchallenge.PlayerAgent",
-        "port": 8023,
-        "player_id": "new"
+        "file_path": "submission.player.PlayerAgent",
+        "port": 8051,
+        "player_id": "new bot"
     },
     "match_settings": {
         "csv_output_path": "./match.csv"
